@@ -34,15 +34,17 @@ plt.imshow(img_color)
 
 plt.subplot(1,3,2)
 num_bins_gray = 40
-hist_gray1, bin_gray1 = hist(img_gray.reshape(img_gray.size), num_bins_gray,(0,255))
+hist_gray1, bin_gray1 = hist(img_gray.reshape(img_gray.size), num_bins_gray, (0,255))
 plt.bar((bin_gray1[0:-1] + bin_gray1[1:])/2, hist_gray1)
 
 plt.subplot(1,3,3)
 hist_gray2, bin_gray2 = histogram_module.normalized_hist(img_gray, num_bins_gray)
 plt.bar((bin_gray2[0:-1] + bin_gray2[1:])/2, hist_gray2)
+
 plt.show()
 
 
+"""
 
 ## more histograms (Question 2.b)
 
@@ -221,4 +223,5 @@ plt.figure(10)
 rpc_module.compare_dist_rpc(model_images, query_images, ['chi2', 'intersect', 'l2'], 'dxdy', num_bins, ['r', 'g', 'b'])
 plt.title('dx/dy histograms')
 plt.show()
+"""
 

@@ -13,8 +13,8 @@ The function should return the Gaussian values Gx computed at the indexes x
 """
 def gauss(sigma):
 
-    low = int(-3*sigma**2)
-    high = int(3*sigma**2)
+    low = int(-3*sigma)
+    high = int(3*sigma)
 
     x = np.arange(low, high + 1, 1)
     Gx = 1/np.sqrt(2*np.pi*sigma**2)*np.exp(-x**2/(2*sigma**2))
@@ -35,9 +35,9 @@ def gaussianfilter(img, sigma):
     sigma = int(sigma)
 
     Gx, x = gauss(sigma)
-    delta_idx = 3*sigma**2
+    delta_idx = 3*sigma
 
-    padded_img = np.pad(img, (3*sigma**2, 3*sigma**2), 'constant')
+    padded_img = np.pad(img, (3*sigma, 3*sigma), 'constant')
 	
     smooth_img = np.zeros((img.shape[0], img.shape[1]))
 
@@ -47,7 +47,7 @@ def gaussianfilter(img, sigma):
     	for n in range(delta_idx, padded_img.shape[1] - delta_idx):
     		smooth_img[m - delta_idx, n - delta_idx] = np.dot(padded_img[m, n-delta_idx:n+delta_idx + 1], Gx)
 
-    padded_img = np.pad(smooth_img, (3*sigma**2, 3*sigma**2), 'constant')
+    padded_img = np.pad(smooth_img, (3*sigma, 3*sigma), 'constant')
 
     # Ix
     for m in range(delta_idx, padded_img.shape[0] - delta_idx):
@@ -64,8 +64,8 @@ The function should return the Gaussian derivative values Dx computed at the ind
 """
 def gaussdx(sigma):
 
-    low = int(-3*sigma**2)
-    high = int(3*sigma**2)
+    low = int(-3*sigma)
+    high = int(3*sigma)
 
     x = np.arange(low, high + 1, 1)
     Dx = -(1/np.sqrt(2*np.pi*sigma**3)*x*np.exp(-x**2/(2*sigma**2)))
@@ -80,9 +80,9 @@ def gaussderiv(img, sigma):
     sigma = int(sigma)
 
     Dx, x = gaussdx(sigma)
-    delta_idx = 3*sigma**2
+    delta_idx = 3*sigma
 
-    padded_img = np.pad(img, (3*sigma**2, 3*sigma**2), 'constant')
+    padded_img = np.pad(img, (3*sigma, 3*sigma), 'constant')
     
     imgDx = np.zeros((img.shape[0], img.shape[1]))
     imgDy = np.zeros((img.shape[0], img.shape[1]))

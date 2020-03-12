@@ -10,8 +10,7 @@ import math
 def dist_intersect(x,y):
     
     #... (your code here)
-
-
+  return
 
 # Compute the L2 distance between x and y histograms
 # Check that the distance range in [0,sqrt(2)]
@@ -19,7 +18,7 @@ def dist_intersect(x,y):
 def dist_l2(x,y):
     
     #... (your code here)
-
+  return
 
 
 # Compute chi2 distance between x and y
@@ -29,7 +28,7 @@ def dist_l2(x,y):
 def dist_chi2(x,y):
     
     #... (your code here)
-
+  return 
 
 
 def get_dist_by_name(x, y, dist_name):
@@ -41,8 +40,8 @@ def get_dist_by_name(x, y, dist_name):
     return dist_l2(x,y)
   else:
     assert False, 'unknown distance: %s'%dist_name
-  
 
+  return
 
 
 

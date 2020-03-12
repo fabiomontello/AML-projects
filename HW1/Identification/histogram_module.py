@@ -1,5 +1,6 @@
 import numpy as np
 from numpy import histogram as hist
+from collections import Counter      # our import (for normalized_hist fun)
 
 
 
@@ -22,11 +23,21 @@ def normalized_hist(img_gray, num_bins):
     assert len(img_gray.shape) == 2, 'image dimension mismatch'
     assert img_gray.dtype == 'float', 'incorrect image type'
 
+    bin_size = 255.0 / num_bins
+    n_pixels = img_gray.size
 
-    #... (your code here)
+    img_gray = (img_gray.flatten() // bin_size).astype(int)
+    
+    # creating the histogram and bins array using frequencies (Counter())
+    empty_dict = Counter(list(range(num_bins+1)))
+    freq = empty_dict + Counter(img_gray)
+    freq.subtract(empty_dict)
 
+    # taking hist and bins
+    hists = np.array(list(freq.values())) / n_pixels # normalizing by n_pixels
+    bins = np.array(list(freq.keys())) * bin_size    # obtaining float bin values 
 
-    return hists, bins
+    return hists[0:-1], bins
 
 
 
