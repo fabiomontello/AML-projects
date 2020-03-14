@@ -19,10 +19,6 @@ def rgb2gray(rgb):
     return gray
 
 
-
-
-
-
 ## gray-value histograms (Question 2.a)
 
 img_color = np.array(Image.open('./model/obj100__0.png'))
@@ -82,7 +78,7 @@ plt.bar(np.array(range(1,hist_dxdy.size+1)),hist_dxdy)
 plt.show()
 
 
-"""
+
 ## Distance functions (Question 2.c)
 
 image_files1 = ['./model/obj1__0.png']
@@ -170,14 +166,17 @@ with open('query.txt') as fp:
     query_images = fp.readlines()
 query_images = [x.strip() for x in query_images] 
 
-dist_type = 'intersect';
+dist_type = 'chi2';
 hist_type = 'rg';
 num_bins = 30;
 
 [best_match, D] = match_module.find_best_match(model_images, query_images, dist_type, hist_type, num_bins)
+print(best_match)
+print(D[0:10, 0:10])
 
 
 
+"""
 ## visualize nearest neighbors (Question 3.b)
 query_images_vis = [query_images[i] for i in np.array([0,4,9])]
 match_module.show_neighbors(model_images, query_images_vis, dist_type, hist_type, num_bins)

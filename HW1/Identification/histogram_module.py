@@ -171,23 +171,23 @@ def dxdy_hist(img_gray, num_bins):
 
 
 def is_grayvalue_hist(hist_name):
-  if hist_name == 'grayvalue' or hist_name == 'dxdy':
-    return True
-  elif hist_name == 'rgb' or hist_name == 'rg':
-    return False
-  else:
-    assert False, 'unknown histogram type'
+    if hist_name == 'grayvalue' or hist_name == 'dxdy':
+        return True
+    elif hist_name == 'rgb' or hist_name == 'rg':
+        return False
+    else:
+        assert False, 'unknown histogram type'
 
 
 def get_hist_by_name(img, num_bins_gray, hist_name):
-  if hist_name == 'grayvalue':
-    return normalized_hist(img, num_bins_gray)
-  elif hist_name == 'rgb':
-    return rgb_hist(img, num_bins_gray)
-  elif hist_name == 'rg':
-    return rg_hist(img, num_bins_gray)
-  elif hist_name == 'dxdy':
-    return dxdy_hist(img, num_bins_gray)
-  else:
-    assert False, 'unknown distance: %s'%hist_name
+    if hist_name == 'grayvalue':
+        return normalized_hist(img, num_bins_gray)
+    elif hist_name == 'rgb':
+        return rgb_hist(img, num_bins_gray)
+    elif hist_name == 'rg':
+        return rg_hist(img, num_bins_gray)
+    elif hist_name == 'dxdy':
+        return dxdy_hist(img, num_bins_gray)
+    else:
+        assert False, 'unknown distance: %s'%hist_name
 
