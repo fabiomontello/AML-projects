@@ -44,7 +44,7 @@ plt.bar((bin_gray2[0:-1] + bin_gray2[1:])/2, hist_gray2)
 plt.show()
 
 
-"""
+
 
 ## more histograms (Question 2.b)
 
@@ -73,7 +73,7 @@ plt.show()
 #Compose and test dxdy histograms (histogram_module.dxdy_hist)
 plt.figure(5)
 plt.subplot(1,2,1)
-plt.imshow(img_color)
+plt.imshow(img_color, cmap='gray')
 
 num_bins_dxdy = 10
 plt.subplot(1,2,2)
@@ -82,7 +82,7 @@ plt.bar(np.array(range(1,hist_dxdy.size+1)),hist_dxdy)
 plt.show()
 
 
-
+"""
 ## Distance functions (Question 2.c)
 
 image_files1 = ['./model/obj1__0.png']

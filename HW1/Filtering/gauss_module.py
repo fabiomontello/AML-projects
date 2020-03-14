@@ -73,16 +73,30 @@ def gaussdx(sigma):
     return Dx, x
 
 
+def gaussdx_cap(sigma, cap):
 
-def gaussderiv(img, sigma):
+    low = cap[0]
+    high = cap[1]
+
+    x = np.arange(low, high + 1, 1)
+    Dx = -(1/np.sqrt(2*np.pi*sigma**3)*x*np.exp(-x**2/(2*sigma**2)))
+    
+    return Dx, x
+
+def gaussderiv(img, sigma, cap = None):
 
         
     sigma = int(sigma)
 
-    Dx, x = gaussdx(sigma)
-    delta_idx = 3*sigma
+    if(cap == None):
+        Dx, x = gaussdx(sigma)
+        delta_idx = 3*sigma
+        padded_img = np.pad(img, (3*sigma, 3*sigma), 'constant')
+    else:
+        Dx, x = gaussdx_cap(sigma, cap)
+        delta_idx = cap[1]
+        padded_img = np.pad(img, (cap[1], cap[1]), 'constant')
 
-    padded_img = np.pad(img, (3*sigma, 3*sigma), 'constant')
     
     imgDx = np.zeros((img.shape[0], img.shape[1]))
     imgDy = np.zeros((img.shape[0], img.shape[1]))
@@ -94,10 +108,13 @@ def gaussderiv(img, sigma):
             imgDx[m - delta_idx, n - delta_idx] = np.dot(padded_img[m, n-delta_idx:n+delta_idx + 1], Dx)
 
 
-    # Ix
+    # Iy
     for m in range(delta_idx, padded_img.shape[0] - delta_idx):
         for n in range(delta_idx, padded_img.shape[1] - delta_idx):
             imgDy[m - delta_idx, n - delta_idx] = np.dot(padded_img[m - delta_idx:m+delta_idx+1, n], Dx)
     
     return imgDx, imgDy
+
+
+
 
