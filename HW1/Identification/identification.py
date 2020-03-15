@@ -1,5 +1,6 @@
 ## import packages
 import numpy as np
+import pandas as pd
 from PIL import Image
 from numpy import histogram as hist  # call hist, otherwise np.histogram
 import matplotlib.pyplot as plt
@@ -18,9 +19,46 @@ def rgb2gray(rgb):
 
     return gray
 
+def grid_search(model_images, query_images, dist_type, hist_type, num_bins):
+
+    try:
+        [best_match, D] = match_module.find_best_match(model_images, query_images, dist_type, hist_type, num_bins)
+    except:
+        print(dist_type, hist_type, num_bins, 'errore linea 25')
+        num_correct = 0
+        recog_rate = 0
+
+    try:
+        num_correct = sum(best_match == range(len(query_images)))
+        recog_rate = num_correct / len(query_images)
+    except:
+        print(dist_type, hist_type, num_bins, 'errore linea 30')
+
+    return [[dist_type, hist_type, num_bins, num_correct, recog_rate]]
+
+def grid_search_multiprocessing(model_images, query_images, dist_list, hist_list, num_bins):
+    from multiprocessing import cpu_count
+    from concurrent.futures import ProcessPoolExecutor, as_completed
+    from itertools import product
+
+    ncpus = cpu_count()
+    results = []
+
+    grid = list(product(*[dist_list, hist_list, num_bins])) #zip(dist_list, hist_list, num_bins)
+
+    with ProcessPoolExecutor(max_workers=ncpus) as executor:
+        futures = list((executor.submit(grid_search, model_images, query_images, trip[0], trip[1], trip[2] ) for trip in grid))
+
+    for future in as_completed(futures):
+        results += future.result()
+
+    final_res = pd.DataFrame(results, columns=['dist_type', 'hist_type', 'num_bins', 'correct', 'recog_rate'])
+    final_res.to_csv('grid_search.csv', index=False)
+
+    return
 
 ## gray-value histograms (Question 2.a)
-
+"""
 img_color = np.array(Image.open('./model/obj100__0.png'))
 img_gray = rgb2gray(img_color.astype('double'))
 
@@ -155,7 +193,7 @@ print('%s-%s, %s-%s, %s-%s, %s-%s'%('chi2', 'grayvalue', 'chi2', 'rgb', 'chi2', 
 
 
 
-
+"""
 ## Find best match (Question 3.a)
 
 with open('model.txt') as fp:
@@ -166,17 +204,15 @@ with open('query.txt') as fp:
     query_images = fp.readlines()
 query_images = [x.strip() for x in query_images] 
 
-dist_type = 'chi2';
+dist_type = 'intersect';
 hist_type = 'rg';
 num_bins = 30;
 
 [best_match, D] = match_module.find_best_match(model_images, query_images, dist_type, hist_type, num_bins)
-print(best_match)
-print(D[0:10, 0:10])
 
 
 
-"""
+
 ## visualize nearest neighbors (Question 3.b)
 query_images_vis = [query_images[i] for i in np.array([0,4,9])]
 match_module.show_neighbors(model_images, query_images_vis, dist_type, hist_type, num_bins)
@@ -188,11 +224,21 @@ match_module.show_neighbors(model_images, query_images_vis, dist_type, hist_type
 num_correct = sum( best_match == range(len(query_images)) )
 print('number of correct matches: %d (%f)\n'% (num_correct, 1.0 * num_correct / len(query_images)))
 
+# decide whether to perform or not multiprocessing grid search
+grid_boolean = True
 
+if grid_boolean:
+    print('performing grid search')
+    dist_list = ['chi2', 'l2', 'intersect']
+    hist_list = ['grayvalue', 'rgb', 'rg', 'dxdy']
+    num_bins = [5]
 
+    grid_search_multiprocessing(model_images, query_images, dist_list, hist_list, num_bins)
 
+results = pd.read_csv('grid_search.csv')
+print(results.sort_values(by=['recog_rate'], ascending=False).head())
 
-
+"""
 ## plot recall_precision curves (Question 4)
 
 with open('model.txt') as fp:
@@ -223,4 +269,3 @@ rpc_module.compare_dist_rpc(model_images, query_images, ['chi2', 'intersect', 'l
 plt.title('dx/dy histograms')
 plt.show()
 """
-

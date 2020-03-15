@@ -74,7 +74,9 @@ def compute_histograms(image_list, hist_type, hist_isgray, num_bins):
         img = img.astype('double')
         if hist_isgray:
             img = rgb2gray(img)
-        image_hist.append(fun(img, num_bins))
+            image_hist.append(fun(img, num_bins)[0])
+        else:
+            image_hist.append(fun(img, num_bins))
 
     return image_hist
 
@@ -86,11 +88,40 @@ def compute_histograms(image_list, hist_type, hist_isgray, num_bins):
 # Note: use subplot command to show all the images in the same Python figure, one row per query image
 
 def show_neighbors(model_images, query_images, dist_type, hist_type, num_bins):
-    
-    
-    plt.figure()
 
     num_nearest = 5  # show the top-5 neighbors
-    
-    #... (your code here)
+
+    best_match, D = find_best_match(model_images, query_images, dist_type, hist_type, num_bins)
+    D_idx = np.argsort(D, axis=0)
+
+    best_matching = {}
+
+    for column in range(len(query_images)):
+        if dist_type == "intersect":
+            # take the highest values
+            best_matching[query_images[column]] = [model_images[idx] for idx in D_idx[-num_nearest:, column][::-1]]
+        else: # other metrics
+            best_matching[query_images[column]] = [model_images[idx] for idx in D_idx[:num_nearest, column]]
+
+
+    fig, axs = plt.subplots(len(query_images), num_nearest + 1)
+
+    for i, query in enumerate(best_matching.keys()):
+
+        ax = axs[i,0]
+        ax.imshow(np.array(Image.open(query)))
+        ax.set_title('Q' + str(i))
+        ax.set_yticklabels([])
+        ax.set_xticklabels([])
+
+        for j, model in enumerate(best_matching[query]):
+            ax = axs[i, j+1]
+            ax.imshow(np.array(Image.open(model)))
+            ax.set_title('MO.' + model.split('obj')[1].split('_')[0])
+            ax.set_yticklabels([])
+            ax.set_xticklabels([])
+
+    plt.show()
+    return
+
 
