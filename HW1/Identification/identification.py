@@ -21,18 +21,11 @@ def rgb2gray(rgb):
 
 def grid_search(model_images, query_images, dist_type, hist_type, num_bins):
 
-    try:
-        [best_match, D] = match_module.find_best_match(model_images, query_images, dist_type, hist_type, num_bins)
-    except:
-        print(dist_type, hist_type, num_bins, 'errore linea 25')
-        num_correct = 0
-        recog_rate = 0
+    [best_match, D] = match_module.find_best_match(model_images, query_images, dist_type, hist_type, num_bins)
 
-    try:
-        num_correct = sum(best_match == range(len(query_images)))
-        recog_rate = num_correct / len(query_images)
-    except:
-        print(dist_type, hist_type, num_bins, 'errore linea 30')
+
+    num_correct = sum(best_match == range(len(query_images)))
+    recog_rate = num_correct / len(query_images)
 
     return [[dist_type, hist_type, num_bins, num_correct, recog_rate]]
 
@@ -58,7 +51,7 @@ def grid_search_multiprocessing(model_images, query_images, dist_list, hist_list
     return
 
 ## gray-value histograms (Question 2.a)
-"""
+
 img_color = np.array(Image.open('./model/obj100__0.png'))
 img_gray = rgb2gray(img_color.astype('double'))
 
@@ -193,7 +186,7 @@ print('%s-%s, %s-%s, %s-%s, %s-%s'%('chi2', 'grayvalue', 'chi2', 'rgb', 'chi2', 
 
 
 
-"""
+
 ## Find best match (Question 3.a)
 
 with open('model.txt') as fp:
@@ -225,20 +218,22 @@ num_correct = sum( best_match == range(len(query_images)) )
 print('number of correct matches: %d (%f)\n'% (num_correct, 1.0 * num_correct / len(query_images)))
 
 # decide whether to perform or not multiprocessing grid search
-grid_boolean = True
+grid_boolean = False
 
 if grid_boolean:
     print('performing grid search')
     dist_list = ['chi2', 'l2', 'intersect']
     hist_list = ['grayvalue', 'rgb', 'rg', 'dxdy']
-    num_bins = [5]
+    num_bins = [5, 10, 15, 30, 50]
 
     grid_search_multiprocessing(model_images, query_images, dist_list, hist_list, num_bins)
+    print('done')
 
 results = pd.read_csv('grid_search.csv')
+print('Grid search result')
 print(results.sort_values(by=['recog_rate'], ascending=False).head())
 
-"""
+"""""
 ## plot recall_precision curves (Question 4)
 
 with open('model.txt') as fp:
@@ -268,4 +263,4 @@ plt.figure(10)
 rpc_module.compare_dist_rpc(model_images, query_images, ['chi2', 'intersect', 'l2'], 'dxdy', num_bins, ['r', 'g', 'b'])
 plt.title('dx/dy histograms')
 plt.show()
-"""
+"""""
