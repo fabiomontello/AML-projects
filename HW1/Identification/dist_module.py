@@ -29,7 +29,7 @@ def dist_l2(x,y):
 # Add a minimum score to each cell of the histograms (e.g. 1) to avoid division by 0
 
 def dist_chi2(x,y):
-    
+
     boolean = ((x + y) == 0).astype(np.float)
     x = x + boolean
     y = y + boolean

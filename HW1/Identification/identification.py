@@ -234,6 +234,7 @@ print('Grid search result')
 print(results.sort_values(by=['recog_rate'], ascending=False).head())
 
 """""
+"""""
 ## plot recall_precision curves (Question 4)
 
 with open('model.txt') as fp:
@@ -244,7 +245,7 @@ with open('query.txt') as fp:
     query_images = fp.readlines()
 query_images = [x.strip() for x in query_images] 
 
-num_bins = 20;
+num_bins = 20
 
 
 plt.figure(8)
@@ -263,4 +264,3 @@ plt.figure(10)
 rpc_module.compare_dist_rpc(model_images, query_images, ['chi2', 'intersect', 'l2'], 'dxdy', num_bins, ['r', 'g', 'b'])
 plt.title('dx/dy histograms')
 plt.show()
-"""""
