@@ -59,24 +59,16 @@ def compute_histograms(image_list, hist_type, hist_isgray, num_bins):
     image_hist = []
 
     # Compute hisgoram for each image and add it at the bottom of image_hist
-    
-    if hist_type == "grayvalue":
-        fun = histogram_module.normalized_hist
-    elif hist_type == "rgb":
-        fun = histogram_module.rgb_hist
-    elif hist_type == "rg":
-        fun = histogram_module.rg_hist
-    elif hist_type == "dxdy":
-        fun = histogram_module.dxdy_hist
+
     
     for i in range(len(image_list)):
         img = np.array(Image.open("./" + image_list[i]))
         img = img.astype('double')
         if hist_isgray:
             img = rgb2gray(img)
-            image_hist.append(fun(img, num_bins)[0])
-        else:
-            image_hist.append(fun(img, num_bins))
+        hist = histogram_module.get_hist_by_name(img, num_bins, hist_type)
+
+        image_hist.append(hist)
 
     return image_hist
 

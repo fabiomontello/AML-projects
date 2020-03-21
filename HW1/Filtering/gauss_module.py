@@ -83,21 +83,16 @@ def gaussdx_cap(sigma, cap):
     
     return Dx, x
 
-def gaussderiv(img, sigma, cap = None):
+def gaussderiv(img, sigma):
 
-        
     sigma = int(sigma)
+    img = gaussianfilter(img, sigma)
 
-    if(cap == None):
-        Dx, x = gaussdx(sigma)
-        delta_idx = 3*sigma
-        padded_img = np.pad(img, (3*sigma, 3*sigma), 'constant')
-    else:
-        Dx, x = gaussdx_cap(sigma, cap)
-        delta_idx = cap[1]
-        padded_img = np.pad(img, (cap[1], cap[1]), 'constant')
 
-    
+    Dx, x = gaussdx(sigma)
+    delta_idx = 3*sigma
+    padded_img = np.pad(img, (3*sigma, 3*sigma), 'constant')
+
     imgDx = np.zeros((img.shape[0], img.shape[1]))
     imgDy = np.zeros((img.shape[0], img.shape[1]))
 

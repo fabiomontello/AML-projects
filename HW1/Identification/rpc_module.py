@@ -5,41 +5,6 @@ import histogram_module
 import dist_module
 import match_module
 
-def plot_rpc_mod(D, plot_color):
-    recall = []
-    precision = []
-    num_queries = D.shape[1]
-    
-    num_images = D.shape[0]
-    assert(num_images == num_queries), 'Distance matrix should be a squatrix'
-    
-    labels = np.diag([1]*num_images)
-      
-    d = D.reshape(D.size)
-    l = labels.reshape(labels.size)
-     
-    sortidx = d.argsort()
-    d = d[sortidx] #score in ordine
-    l = l[sortidx] #label corrispondenti all'ordine di score
-
-    tau = sorted(d[d > np.min(d)])
-
-    for t in tau:
-        tp = 0
-        fp = 0
-        fn = 0
-        for idt in range(len(d)):
-            if(d[idt] < t):
-                tp += l[idt]
-                fp += 1 - l[idt]
-            else:
-                fn += l[idt]
-        
-        precision.append(tp/(tp+fp))
-        recall.append(tp/(tp+fn))   
-
-    plt.plot([1-precision[i] for i in range(len(precision))], recall, plot_color+'-')
-
 
 # compute and plot the recall/precision curve
 #
@@ -66,26 +31,15 @@ def plot_rpc(D, plot_color):
     l = l[sortidx]
     
     tp = 0
-    #... (your code here)
-    
+
     for idt in range(len(d)):
         tp += l[idt]
 
-        neg = len(d) - idt + 1#TN + FN
-        pos = len(d) - neg 
-        precision.append(tp / (idt+1))
-        recall.append(tp / num_images)
+        neg = len(d) - idt + 1 # TN + FN
+        pos = len(d) - neg     # TP + FP
+        precision.append(tp/pos)
+        recall.append(tp/num_images)
 
-        #Codice non definito tau, utilizzare i valori correnti come threashold? SGAMATO!
-
-        #Come impostare la threshold?
-        #
-
-        #... (your code here)
-        
-        #Compute precision and recall values and append them to "recall" and "precision" vectors
-        #... (your code here)
-    
     plt.plot([1-precision[i] for i in range(len(precision))], recall, plot_color+'-')
 
 
