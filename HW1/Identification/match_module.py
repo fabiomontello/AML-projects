@@ -32,7 +32,7 @@ def find_best_match(model_images, query_images, dist_type, hist_type, num_bins):
     query_hists = compute_histograms(query_images, hist_type, hist_isgray, num_bins)
     
     D = np.zeros((len(model_images), len(query_images)))
-    
+
     
     if dist_type == "l2":
         fun_dist = dist_module.dist_l2
@@ -67,6 +67,9 @@ def compute_histograms(image_list, hist_type, hist_isgray, num_bins):
         if hist_isgray:
             img = rgb2gray(img)
         hist = histogram_module.get_hist_by_name(img, num_bins, hist_type)
+
+        if len(hist) == 2:
+            hist = hist[0]
 
         image_hist.append(hist)
 

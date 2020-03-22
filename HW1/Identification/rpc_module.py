@@ -35,7 +35,7 @@ def plot_rpc(D, plot_color):
     for idt in range(len(d)):
         tp += l[idt]
 
-        neg = len(d) - idt + 1 # TN + FN
+        neg = len(d) - idt - 1 # TN + FN
         pos = len(d) - neg     # TP + FP
         precision.append(tp/pos)
         recall.append(tp/num_images)
