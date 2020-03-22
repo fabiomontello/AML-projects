@@ -25,7 +25,7 @@ def grid_search(model_images, query_images, dist_type, hist_type, num_bins):
 
     num_correct = sum(best_match == range(len(query_images)))
     recog_rate = num_correct / len(query_images)
-    
+
     return [[dist_type, hist_type, num_bins, num_correct, recog_rate]]
 
 
@@ -219,7 +219,7 @@ num_correct = sum( best_match == range(len(query_images)) )
 print('number of correct matches: %d (%f)\n'% (num_correct, 1.0 * num_correct / len(query_images)))
 
 # decide whether to perform or not multiprocessing grid search
-grid_boolean = True
+grid_boolean = False
 
 if grid_boolean:
     print('performing grid search')
