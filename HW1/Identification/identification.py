@@ -219,7 +219,13 @@ num_correct = sum( best_match == range(len(query_images)) )
 print('number of correct matches: %d (%f)\n'% (num_correct, 1.0 * num_correct / len(query_images)))
 
 # decide whether to perform or not multiprocessing grid search
+<<<<<<< HEAD
 grid_boolean = True
+=======
+# Warning: run the grid_search (set grid_boolean to True) only with Linux
+#          check Windows compatibility for multiprocessing
+grid_boolean = False
+>>>>>>> 5c00aadb5f486fc22cfdf992ddd195f57ba01286
 
 if grid_boolean:
     print('performing grid search')
