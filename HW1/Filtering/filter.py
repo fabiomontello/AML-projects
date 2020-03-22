@@ -104,24 +104,3 @@ imgmag = np.sqrt(imgDx**2 + imgDy**2)
 plt.imshow(imgmag, cmap='gray')
 plt.show()
 
-
-
-img_c = np.array(Image.open('graf.png')).astype('double')
-img = rgb2gray(img_c)
-[imgDx, imgDy] = gauss_module.gaussderiv(smooth_img, 7.0)
-
-plt.figure(9)
-ax1 = plt.subplot(1,3,1)
-ax2 = plt.subplot(1,3,2)
-ax3 = plt.subplot(1,3,3)
-plt.sca(ax1)
-plt.imshow(imgDx, cmap='gray')
-plt.sca(ax2)
-plt.imshow(imgDy, cmap='gray')
-plt.sca(ax3)
-imgmag = np.sqrt(imgDx**2 + imgDy**2)
-plt.imshow(imgmag, cmap='gray')
-plt.show()
-
-
-

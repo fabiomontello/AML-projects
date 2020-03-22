@@ -86,8 +86,8 @@ def gaussdx_cap(sigma, cap):
 def gaussderiv(img, sigma):
 
     sigma = int(sigma)
-    img = gaussianfilter(img, sigma)
 
+    img = gaussianfilter(img, sigma)
 
     Dx, x = gaussdx(sigma)
     delta_idx = 3*sigma
