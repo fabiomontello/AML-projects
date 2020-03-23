@@ -220,7 +220,7 @@ print('number of correct matches: %d (%f)\n'% (num_correct, 1.0 * num_correct / 
 
 # decide whether to perform or not multiprocessing grid search
 <<<<<<< HEAD
-grid_boolean = True
+grid_boolean = False
 =======
 # Warning: run the grid_search (set grid_boolean to True) only with Linux
 #          check Windows compatibility for multiprocessing
