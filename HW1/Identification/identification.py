@@ -11,7 +11,6 @@ import match_module
 import rpc_module
 
 
-
 def rgb2gray(rgb):
 
     r, g, b = rgb[:,:,0], rgb[:,:,1], rgb[:,:,2]
@@ -28,8 +27,10 @@ def grid_search(model_images, query_images, dist_type, hist_type, num_bins):
 
     return [[dist_type, hist_type, num_bins, num_correct, recog_rate]]
 
-
-
+####################### NOTE #########################################################
+# In case you want to try the code of the grid search with the multiprocessing computation, Unix-based systems are more 
+# suitable with the packages. We found the multiprocessing package of python in Windows buggy.
+######################################################################################
 def grid_search_multiprocessing(model_images, query_images, dist_list, hist_list, num_bins):
     from multiprocessing import cpu_count
     from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -233,8 +234,7 @@ results = pd.read_csv('grid_search.csv')
 print('Grid search top 5 results')
 print(results.sort_values(by=['recog_rate'], ascending=False).head())
 
-"""""
-"""""
+
 ## plot recall_precision curves (Question 4)
 
 with open('model.txt') as fp:
