@@ -73,16 +73,6 @@ def gaussdx(sigma):
     return Dx, x
 
 
-def gaussdx_cap(sigma, cap):
-
-    low = cap[0]
-    high = cap[1]
-
-    x = np.arange(low, high + 1, 1)
-    Dx = -1/(np.sqrt(2*np.pi)*sigma**3)*x*np.exp(-x**2/(2*sigma**2))
-    
-    return Dx, x
-
 def gaussderiv(img, sigma):
 
     sigma = int(sigma)
