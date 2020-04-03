@@ -99,7 +99,7 @@ class TwoLayerNet(object):
         z_3 = (np.dot(W2.T, a_2).T + b2).T
         z_3 = np.exp(z_3)
         v_sums = np.sum(z_3, axis = 0)
-        scores = (z_3 / v_sums).T        
+        a_3 = (z_3 / v_sums).T        
 
         pass
 
@@ -125,9 +125,15 @@ class TwoLayerNet(object):
         
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         
-        scores = [scores[i,y[i]] for i in range(scores.shape[0])]
-        loss = np.mean(-np.log(scores)) + reg*(np.sum(np.square(W1)) + np.sum(np.square(W2)))
+        #### Different implementation of the list of scores (for loop) ####
+        # scores = [scores[i,y[i]] for i in range(scores.shape[0])]
+        # loss = np.mean(-np.log(scores)) + reg*(np.sum(np.square(W1)) + np.sum(np.square(W2)))
         
+        delta = np.diag(np.ones(self.output_size))[y]
+        scores = a_3[delta == True]
+
+        loss = np.mean(-np.log(scores)) + reg*(np.sum(np.square(W1)) + np.sum(np.square(W2)))
+
         pass
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
@@ -142,7 +148,12 @@ class TwoLayerNet(object):
         ##############################################################################
 
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+
+        dJ_dW2 = ((1/N) * (a_3 - delta).T.dot(a_2.T) + 2*reg*W2.T).T
         
+        #dJ_dW1
+
+        # grads['W1'] = 
         
 
         pass
