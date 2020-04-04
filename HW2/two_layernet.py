@@ -149,12 +149,24 @@ class TwoLayerNet(object):
 
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
+        # print(W2.shape)
+        # print(a_3.shape)
+        # print(a_2.shape)
+        # print(a_1.shape)
+        # print(z_2.shape)
+
         dJ_dW2 = ((1/N) * (a_3 - delta).T.dot(a_2.T) + 2*reg*W2.T).T
         
-        #dJ_dW1
-
-        # grads['W1'] = 
+        dJ_da2 = (1/N) * ((a_3 - delta).dot(W2.T)).T
+        da2_dz2 = np.heaviside(z_2,1)
+        dJ_dW1 = (dJ_da2 * da2_dz2).dot(a_1.T)
+        dJ_dW1 = (dJ_dW1).T + 2*reg*W1
         
+        dJ_db2 = (dJ_da2 * da2_dz2).dot(np.ones(N)) 
+
+        dJ_db1 = (dJ_da2 * da2_dz2).T.dot(np.ones(self.params['b1'].shape)) 
+
+        print(dJ_db1.shape)
 
         pass
 
