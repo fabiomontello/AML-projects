@@ -5,6 +5,7 @@
 #-----------------------------------------------------------------------------------
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 from two_layernet import TwoLayerNet
 from gradient_check import eval_numerical_gradient
 from data_utils import get_CIFAR10_data
@@ -158,6 +159,7 @@ plt.show()
 # Invoke the get_CIFAR10_data function to get our data.
 
 X_train, y_train, X_val, y_val, X_test, y_test = get_CIFAR10_data()
+
 print('Train data shape: ', X_train.shape)
 print('Train labels shape: ', y_train.shape)
 print('Validation data shape: ', X_val.shape)
@@ -181,6 +183,7 @@ plt.show()
 input_size = 32 * 32 * 3
 hidden_size = 50
 num_classes = 10
+
 net = TwoLayerNet(input_size, hidden_size, num_classes)
 # Train the network
 stats = net.train(X_train, y_train, X_val, y_val,
@@ -274,6 +277,73 @@ best_net = None # store the best model into this
 #################################################################################
 
 # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+
+# num_iters=1000, batch_size=200, 
+# learning_rate=1e-4, learning_rate_decay=0.95,
+# reg=0.25, verbose=True
+
+param= { 'hidden_size': [50, 75],
+         'num_iters': [1000, 2000],\
+         'batch_size': [200, 100],\
+         'learning_rate': [1e-4, 1e-3, 1e-5],\
+         'reg': [0.25, 0.1, 0.01, 0.001],\
+         'verbose': [False]}
+
+def grid_custom(diz):
+    import itertools
+
+    l = []
+    lab = [i for i in diz]
+
+    for i in diz:
+        l.append(diz[i])
+
+    lines = []
+    for i in list(itertools.product(*l)):
+        p = dict(zip(lab, list(i)))
+        hidden_size = p['hidden_size']
+        del p['hidden_size']
+
+        net = TwoLayerNet(input_size, hidden_size, num_classes)
+
+        # Train the network
+        stats = net.train(X_train, y_train, X_val, y_val, **p)
+
+        # Predict on the validation set
+        val_loss = net.loss(X_val, y_val)[0]
+        val_acc = (net.predict(X_val) == y_val).mean()
+        train_loss = net.loss(X_train, y_train)[0]
+        train_acc = (net.predict(X_train) == y_train).mean()
+
+        del p['verbose']
+        line = []
+        line.append(hidden_size)
+        for val in p:
+            line.append(p[val])
+
+        line.append(train_loss)
+        line.append(val_loss)
+        line.append(train_acc)
+        line.append(val_acc)
+
+        lines.append(line)
+        print('params', line)
+        print('train acc: ', train_acc)
+        print('test acc: ', val_acc)
+        pass
+
+    df = pd.DataFrame(lines, columns=['hidden_size', 'num_iters', 'batch_size',\
+                               'learning_rate', 'reg', 'train_loss', 'val_loss',\
+                                'train_acc', 'val_acc'])
+    df.sort_values(by=['val_acc'], ascending=False).to_csv('results_twolayernet.csv', index=False)
+    return 
+
+perform_grid_search = False
+if(perform_grid_search):
+    grid_custom(param)
+
+df = pd.read_csv('results_twolayernet.csv')
+print(df.sort_values(by=['val_acc'], ascending=False))
 
 
 

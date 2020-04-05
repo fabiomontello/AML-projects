@@ -101,6 +101,7 @@ class TwoLayerNet(object):
         v_sums = np.sum(z_3, axis = 0)
         a_3 = (z_3 / v_sums).T        
 
+        scores = a_3
         pass
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
@@ -290,7 +291,8 @@ class TwoLayerNet(object):
         ###########################################################################
         
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
+        scores = self.loss(X)
+        y_pred = np.argmax(scores, axis=1)
 
 
         pass
