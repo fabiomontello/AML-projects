@@ -210,8 +210,6 @@ class TwoLayerNet(object):
         val_acc_history = []
 
         for it in range(num_iters):
-            X_batch = X
-            y_batch = y
 
             #########################################################################
             # TODO: Create a random minibatch of training data and labels, storing  #
@@ -219,8 +217,9 @@ class TwoLayerNet(object):
             #########################################################################
             
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-            
-            
+            idx = np.random.randint(low = 0, high = num_train, size = batch_size)
+            X_batch = X[idx]
+            y_batch = y[idx]
             
             pass
         
@@ -238,8 +237,10 @@ class TwoLayerNet(object):
             #########################################################################
             
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-            
-            
+            self.params['W1'] = self.params['W1'] - learning_rate*grads["W1"]
+            self.params['b1'] = self.params['b1'] - learning_rate*grads["b1"]
+            self.params['W2'] = self.params['W2'] - learning_rate*grads["W2"]
+            self.params['b2'] = self.params['b2'] - learning_rate*grads["b2"]
             
             pass
         
