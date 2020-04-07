@@ -282,11 +282,11 @@ best_net = None # store the best model into this
 # learning_rate=1e-4, learning_rate_decay=0.95,
 # reg=0.25, verbose=True
 
-param= { 'hidden_size': [50, 75],
-         'num_iters': [1000, 2000],\
-         'batch_size': [200, 100],\
-         'learning_rate': [1e-4, 1e-3, 1e-5],\
-         'reg': [0.25, 0.1, 0.01, 0.001],\
+param= { 'hidden_size': [75, 100], # 50
+         'num_iters': [2000, 3000],#1000,\ 
+         'batch_size': [200, 300],#100\
+         'learning_rate': [1e-3],#1e-4, 1e-5\
+         'reg': [0.1, 0.01, 0.001, 10e-5],#0.25, \
          'verbose': [False]}
 
 def grid_custom(diz):
