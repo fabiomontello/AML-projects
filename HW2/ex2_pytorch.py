@@ -23,13 +23,13 @@ print('Using device: %s'%device)
 # Hyper-parameters
 #--------------------------------
 input_size = 32 * 32 * 3
-hidden_size = [50]
+hidden_size = [100] #50
 num_classes = 10
 num_epochs = 10
-batch_size = 200
+batch_size = 300 #200
 learning_rate = 1e-3
-learning_rate_decay = 0.95
-reg=0.001
+learning_rate_decay = 1 #0.95
+reg=0.01 #0.001
 num_training= 49000
 num_validation =1000
 train = True
