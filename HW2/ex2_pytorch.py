@@ -4,6 +4,10 @@ import torch.nn.functional as F
 import torchvision
 import torchvision.transforms as transforms
 
+########################TORCH SUMMARY AGGIUNTO DA FABIO#######
+from torchsummary import summary
+##################################################
+
 def weights_init(m):
     if type(m) == nn.Linear:
         m.weight.data.normal_(0.0, 1e-3)
@@ -23,13 +27,13 @@ print('Using device: %s'%device)
 # Hyper-parameters
 #--------------------------------
 input_size = 32 * 32 * 3
-hidden_size = [100] #50
+hidden_size = [256,512,128,64,16] #50
 num_classes = 10
 num_epochs = 10
 batch_size = 300 #200
-learning_rate = 1e-3
-learning_rate_decay = 1 #0.95
-reg=0.01 #0.001
+learning_rate = 1e-3 #1e-3
+learning_rate_decay = 1#0.95
+reg= 0.01 #0.001
 num_training= 49000
 num_validation =1000
 train = True
@@ -112,6 +116,7 @@ class MultiLayerPerceptron(nn.Module):
         
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         layers.append(nn.Linear(input_size, hidden_layers[0]))
+        layers.append(nn.ReLU())
         for D_in, D_out in zip(hidden_layers[:-1], hidden_layers[1:]):
             layers.append(nn.Linear(D_in, D_out))
             layers.append(nn.ReLU())
@@ -138,7 +143,8 @@ class MultiLayerPerceptron(nn.Module):
         return out
 
 model = MultiLayerPerceptron(input_size, hidden_size, num_classes).to(device)
-print(model)
+summary(model, input_size=(32, 32, 3))
+repr(model)
 # Print model's state_dict
 '''
 print("Model's state_dict:")
