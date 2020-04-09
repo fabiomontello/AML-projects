@@ -27,13 +27,13 @@ print('Using device: %s'%device)
 # Hyper-parameters
 #--------------------------------
 input_size = 32 * 32 * 3
-hidden_size = [256,512,128,64,16] #50
+hidden_size = [150] #50
 num_classes = 10
 num_epochs = 10
 batch_size = 300 #200
 learning_rate = 1e-3 #1e-3
-learning_rate_decay = 1#0.95
-reg= 0.01 #0.001
+learning_rate_decay = 0.95
+reg= 0.25 #0.001
 num_training= 49000
 num_validation =1000
 train = True
@@ -158,7 +158,7 @@ if train:
 
     # Loss and optimizer
     criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=reg)
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=reg) #
 
     # Train the model
     lr = learning_rate

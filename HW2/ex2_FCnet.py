@@ -339,13 +339,23 @@ def grid_custom(diz):
     return 
 
 perform_grid_search = False
+
 if(perform_grid_search):
     grid_custom(param)
 
 df = pd.read_csv('results_twolayernet.csv')
 print(df.sort_values(by=['val_acc'], ascending=False))
 
+input_size = 32 * 32 * 3
+hidden_size = 100
+num_classes = 10
 
+best_net = TwoLayerNet(input_size, hidden_size, num_classes)
+# Train the network
+stats = best_net.train(X_train, y_train, X_val, y_val,
+            num_iters=3000, batch_size=300,
+            learning_rate=.001, learning_rate_decay=0.95,
+            reg=0.01, verbose=True)
 
 pass
 
