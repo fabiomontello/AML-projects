@@ -27,7 +27,7 @@ print('Using device: %s'%device)
 # Hyper-parameters
 #--------------------------------
 input_size = 32 * 32 * 3
-hidden_size = [75] #50
+hidden_size = [100, 25] #50
 num_classes = 10
 num_epochs = 15
 batch_size = 300 #200
@@ -233,7 +233,7 @@ else:
     # and loading the best model
 
     best_model = None
-    best_model = torch.load('model.ckpt')
+    best_model = torch.load('model.ckpt', map_location=device)
     
     model.load_state_dict(best_model)
     
