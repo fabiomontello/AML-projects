@@ -6,10 +6,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from two_layernet import TwoLayerNet
-from gradient_check import eval_numerical_gradient
-from data_utils import get_CIFAR10_data
-from vis_utils import visualize_grid
 #-------------------------- * End of setup *---------------------------------------
 
 #-------------------------------------------------------
@@ -181,15 +177,15 @@ plt.show()
 # multiplying it by a decay rate.
 
 input_size = 32 * 32 * 3
-hidden_size = 50
+hidden_size = 75
 num_classes = 10
 
 net = TwoLayerNet(input_size, hidden_size, num_classes)
 # Train the network
 stats = net.train(X_train, y_train, X_val, y_val,
-            num_iters=1000, batch_size=200,
-            learning_rate=1e-4, learning_rate_decay=0.95,
-            reg=0.25, verbose=True)
+            num_iters=3000, batch_size=300,
+            learning_rate=1e-3, learning_rate_decay=0.95,
+            reg=1e-3, verbose=True)
 
 # Predict on the validation set
 val_acc = (net.predict(X_val) == y_val).mean()
@@ -210,14 +206,14 @@ print('Validation accuracy: ', val_acc)
 
 
 # Plot the loss function and train / validation accuracies
-plt.figure(3)
-plt.subplot(2, 1, 1)
+plt.figure(3, figsize = (12,8))
+plt.subplot(1, 2, 1)
 plt.plot(stats['loss_history'])
 plt.title('Loss history')
 plt.xlabel('Iteration')
 plt.ylabel('Loss')
 
-plt.subplot(2, 1, 2)
+plt.subplot(1, 2, 2)
 plt.plot(stats['train_acc_history'], label='train')
 plt.plot(stats['val_acc_history'], label='val')
 plt.title('Classification accuracy history')

@@ -27,16 +27,16 @@ print('Using device: %s'%device)
 # Hyper-parameters
 #--------------------------------
 input_size = 32 * 32 * 3
-hidden_size = [150] #50
+hidden_size = [75] #50
 num_classes = 10
-num_epochs = 10
+num_epochs = 15
 batch_size = 300 #200
 learning_rate = 1e-3 #1e-3
 learning_rate_decay = 0.95
-reg= 0.25 #0.001
-num_training= 49000
-num_validation =1000
-train = True
+reg= 1e-3 #0.001
+num_training = 49000
+num_validation = 1000
+train = False
 
 #-------------------------------------------------
 # Load the CIFAR-10 dataset
@@ -253,9 +253,9 @@ else:
             # 2. Get the most confident predicted class        #
             ####################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-            
-
+            output = model(images)
+            scores = F.softmax(output, dim=0)
+            predicted = torch.max(scores, 1)[1]
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
