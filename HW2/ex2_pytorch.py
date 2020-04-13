@@ -4,9 +4,6 @@ import torch.nn.functional as F
 import torchvision
 import torchvision.transforms as transforms
 
-########################TORCH SUMMARY AGGIUNTO DA FABIO#######
-from torchsummary import summary
-##################################################
 
 def weights_init(m):
     if type(m) == nn.Linear:
@@ -143,7 +140,7 @@ class MultiLayerPerceptron(nn.Module):
         return out
 
 model = MultiLayerPerceptron(input_size, hidden_size, num_classes).to(device)
-summary(model, input_size=(32, 32, 3))
+print(model)
 repr(model)
 # Print model's state_dict
 '''
