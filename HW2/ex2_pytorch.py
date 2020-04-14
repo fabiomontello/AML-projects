@@ -141,7 +141,7 @@ class MultiLayerPerceptron(nn.Module):
 
 model = MultiLayerPerceptron(input_size, hidden_size, num_classes).to(device)
 print(model)
-repr(model)
+
 # Print model's state_dict
 '''
 print("Model's state_dict:")
