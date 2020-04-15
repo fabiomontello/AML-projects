@@ -224,7 +224,7 @@ class TwoLayerNet(object):
               X = X[ids]
               y = y[ids]
               idx = 0
-
+            # we use a try/except construct to handle the final batch having different size
             try:
               X_batch = X[idx : idx + batch_size, :] 
               y_batch = y[idx : idx + batch_size]
