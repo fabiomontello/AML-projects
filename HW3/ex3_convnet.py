@@ -112,7 +112,22 @@ class ConvNet(nn.Module):
         layers = []
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
+        # First ConvBlock with input size (i.e. C=3) and first hidden layer(i.e. 128)
+        layers.append(nn.Conv2d(input_size, hidden_layers[0], kernel_size=3, stride=1, padding=1))
+        layers.append(nn.ReLU())
+        layers.append(nn.MaxPool2d(kernel_size=2, stride=2))
 
+        # Adding the other blocks
+        for Din, Dout in zip(hidden_layers[:-1], hidden_layers[1:]):
+	        layers.append(nn.Conv2d(Din, Dout, kernel_size=3, stride=1, padding=1))
+	        layers.append(nn.ReLU())
+	        layers.append(nn.MaxPool2d(kernel_size=2, stride=2))
+		
+        # stacking convolutional blocks
+        self.ConvBlocks = nn.Sequential(*layers)
+
+        # Fully connected layer
+        self.Dense = nn.Linear(hidden_layers[-1], num_classes)
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -122,7 +137,9 @@ class ConvNet(nn.Module):
         #################################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-
+        out = self.ConvBlocks(x)
+        out = out.view(-1, 512)
+        out = self.Dense(out)
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         return out
@@ -178,17 +195,31 @@ model = ConvNet(input_size, hidden_size, num_classes, norm_layer=norm_layer).to(
 model.apply(weights_init)
 # Print the model
 print(model)
+
+for i, (images, labels) in enumerate(train_loader):
+	images = images.to(device)
+
+	break
+
+print('----DEBUGGING----')
+print('input shape (images):', images.shape, '\n')
+
+print('output shape (model(images))', model(images).shape, '\n')
+print(model(images))
+print('----END DEBUGGING----')
+
+#print(model())
 # Print model size
 #======================================================================================
 # Q1.b: Implementing the function to count the number of trainable parameters in the model
 #======================================================================================
-PrintModelSize(model)
+#PrintModelSize(model)
 #======================================================================================
 # Q1.a: Implementing the function to visualize the filters in the first conv layers.
 # Visualize the filters before training
 #======================================================================================
-VisualizeFilter(model)
-
+#VisualizeFilter(model)
+"""
 
 
 # Loss and optimizer
@@ -328,5 +359,5 @@ VisualizeFilter(model)
 
 # Save the model checkpoint
 #torch.save(model.state_dict(), 'model.ckpt')
-
+"""
 
