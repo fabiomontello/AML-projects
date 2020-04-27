@@ -208,7 +208,7 @@ print('output shape (model(images))', model(images).shape, '\n')
 print(model(images))
 print('----END DEBUGGING----')
 
-#print(model())
+print(model())
 # Print model size
 #======================================================================================
 # Q1.b: Implementing the function to count the number of trainable parameters in the model
@@ -219,7 +219,7 @@ print('----END DEBUGGING----')
 # Visualize the filters before training
 #======================================================================================
 #VisualizeFilter(model)
-"""
+
 
 
 # Loss and optimizer
@@ -359,5 +359,4 @@ VisualizeFilter(model)
 
 # Save the model checkpoint
 #torch.save(model.state_dict(), 'model.ckpt')
-"""
 
