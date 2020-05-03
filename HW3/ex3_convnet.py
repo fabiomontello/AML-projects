@@ -37,8 +37,10 @@ learning_rate_decay = 0.95
 reg=0.001
 num_training= 49000
 num_validation =1000
-norm_layer = None #norm_layer = 'BN'
+norm_layer = None #norm_layer="BN"
 print(hidden_size)
+
+dropout_p = 0 #probability of dropout
 
 
 
@@ -52,7 +54,14 @@ print(hidden_size)
 data_aug_transforms = []
 # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-
+data_aug_transforms += [transforms.RandomCrop(32, padding=4), 
+                       transforms.RandomHorizontalFlip(), 
+                       transforms.RandomVerticalFlip(), 
+                       transforms.RandomRotation(2),
+                       transforms.RandomGrayscale(),
+                       transforms.ColorJitter(brightness=0.1, contrast=0.05, saturation=0.5, hue=0.05),
+                       transforms.RandomAffine(0, translate=[0.2,0.2], scale=None, shear=0, resample=False, fillcolor=0),
+                       ]
 
 # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 norm_transform = transforms.Compose(data_aug_transforms+[transforms.ToTensor(),
@@ -114,17 +123,27 @@ class ConvNet(nn.Module):
 
         # First ConvBlock with input size (i.e. C=3) and first hidden layer(i.e. 128)
         layers.append(nn.Conv2d(input_size, hidden_layers[0], kernel_size=3, stride=1, padding=1))
+        layers.append(nn.Dropout(dropout_p))
+        if norm_layer=="BN":
+          layers.append(nn.BatchNorm2d(hidden_layers[0], eps=1e-05, momentum=0.1, 
+                                       affine=True, track_running_stats=True))
         layers.append(nn.ReLU())
         layers.append(nn.MaxPool2d(kernel_size=2, stride=2))
 
         # Adding the other blocks
         for Din, Dout in zip(hidden_layers[:-1], hidden_layers[1:]):
-	        layers.append(nn.Conv2d(Din, Dout, kernel_size=3, stride=1, padding=1))
-	        layers.append(nn.ReLU())
-	        layers.append(nn.MaxPool2d(kernel_size=2, stride=2))
+          
+          layers.append(nn.Conv2d(Din, Dout, kernel_size=3, stride=1, padding=1))
+          layers.append(nn.Dropout(dropout_p))
+          if norm_layer=="BN":
+            layers.append(nn.BatchNorm2d(Dout, eps=1e-05, momentum=0.1, 
+                                         affine=True, track_running_stats=True))
+          layers.append(nn.ReLU())
+          layers.append(nn.MaxPool2d(kernel_size=2, stride=2))
 		
         # stacking convolutional blocks
         self.ConvBlocks = nn.Sequential(*layers)
+        self.Dout = hidden_layers[-1]
 
         # Fully connected layer
         self.Dense = nn.Linear(hidden_layers[-1], num_classes)
@@ -157,9 +176,12 @@ def PrintModelSize(model, disp=True):
     # training                                                                      #
     #################################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-
-
+    model_sz = 0
+    for parameter in model.parameters():
+      model_sz += parameter.nelement()
+    if disp == True:
+      print("\nNumber of parameters: ", model_sz)
+      print("\n")
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     return model_sz
 
@@ -176,9 +198,25 @@ def VisualizeFilter(model):
     # You can use matlplotlib.imshow to visualize an image in python                #
     #################################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+    kernel_map = np.zeros((7*4 + 3, 15*4 + 3, 3))
+
+    kernels = list(model.parameters())[0]
+    kernels = kernels.to("cpu")
+    kernels = kernels.data.numpy()
+
+    kernels = (kernels - kernels.min()) / (kernels.max() - kernels.min())
+
+    cnt = 0
+    for i in range(0, 8*4,4):
+      for j in range(0, 16*4, 4):
+        kernel_map[i:i+3, j:j+3, :] = kernels[cnt]
+        cnt = cnt + 1
+
+    plt.figure(figsize=(20, 10))
+    plt.imshow(kernel_map)
+    plt.show()
 
     pass
-
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
 
@@ -189,6 +227,7 @@ def VisualizeFilter(model):
 # In this question we will implement a convolutional neural networks using the PyTorch
 # library.  Please complete the code for the ConvNet class evaluating the model
 #--------------------------------------------------------------------------------------
+
 model = ConvNet(input_size, hidden_size, num_classes, norm_layer=norm_layer).to(device)
 # Q2.a - Initialize the model with correct batch norm layer
 
@@ -201,19 +240,11 @@ for i, (images, labels) in enumerate(train_loader):
 
 	break
 
-print('----DEBUGGING----')
-print('input shape (images):', images.shape, '\n')
-
-print('output shape (model(images))', model(images).shape, '\n')
-print(model(images))
-print('----END DEBUGGING----')
-
-print(model())
 # Print model size
 #======================================================================================
 # Q1.b: Implementing the function to count the number of trainable parameters in the model
 #======================================================================================
-#PrintModelSize(model)
+PrintModelSize(model)
 #======================================================================================
 # Q1.a: Implementing the function to visualize the filters in the first conv layers.
 # Visualize the filters before training
@@ -231,7 +262,7 @@ lr = learning_rate
 total_step = len(train_loader)
 loss_train = []
 loss_val = []
-best_accuracy = None
+best_accuracy = 0
 accuracy_val = []
 best_model = type(model)(input_size, hidden_size, num_classes, norm_layer=norm_layer) # get a new instance
 #best_model = ConvNet(input_size, hidden_size, num_classes, norm_layer=norm_layer)
@@ -297,7 +328,9 @@ for epoch in range(num_epochs):
         #################################################################################
 
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
+        if accuracy > best_accuracy:
+          best_model.load_state_dict(model.state_dict())
+          best_accuracy=accuracy
         
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
@@ -328,9 +361,7 @@ plt.show()
 # best model so far and perform testing with this model.                        #
 #################################################################################
 # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-
-
+model.load_state_dict(best_model.state_dict())
 # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
 #Compute accuracy on the test set
@@ -358,5 +389,5 @@ VisualizeFilter(model)
 
 
 # Save the model checkpoint
-#torch.save(model.state_dict(), 'model.ckpt')
+torch.save(model.state_dict(), 'model.ckpt')
 

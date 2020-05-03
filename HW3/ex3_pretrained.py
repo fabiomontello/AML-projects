@@ -3,7 +3,6 @@ import torch.nn as nn
 import torchvision
 from torchvision import models
 import torchvision.transforms as transforms
-
 import matplotlib.pyplot as plt
 
 def weights_init(m):
@@ -25,17 +24,17 @@ print('Using device: %s'%device)
 # Hyper-parameters
 #--------------------------------
 input_size = 32 * 32 * 3
-layer_config= [512, 256]
+layer_config = [512, 256]
 num_classes = 10
 num_epochs = 30
 batch_size = 200
 learning_rate = 1e-3
 learning_rate_decay = 0.99
-reg=0#0.001
-num_training= 49000
-num_validation =1000
+reg = 0 #0.001
+num_training = 49000
+num_validation = 1000
 fine_tune = True
-pretrained=True
+pretrained = False
 
 #-------------------------------------------------
 # Load the CIFAR-10 dataset
@@ -49,6 +48,7 @@ data_aug_transforms = [transforms.RandomHorizontalFlip(p=0.5)]#, transforms.Rand
 norm_transform = transforms.Compose(data_aug_transforms+[transforms.ToTensor(),
                                      transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
                                      ]) #Need to preserve the normalization values of the pre-trained model
+
 cifar_dataset = torchvision.datasets.CIFAR10(root='datasets/',
                                            train=True,
                                            transform=norm_transform,
@@ -98,9 +98,15 @@ class VggModel(nn.Module):
         # disable training the feature extraction layers based on the fine_tune flag.   #
         #################################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-        
-
+        model = models.vgg11_bn(pretrained = True)
+        self.features = nn.Sequential(*(list(model.children())[:-2]))
+        set_parameter_requires_grad(self.features, pretrained)
+        layers = []
+        layers.append(nn.Linear(in_features = layer_config[0], out_features = layer_config[1]))
+        layers.append(nn.BatchNorm1d(layer_config[1]))
+        layers.append(nn.ReLU())
+        layers.append(nn.Linear(in_features = layer_config[1], out_features = n_class))
+        self.classifier = nn.Sequential(*layers)
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
     def forward(self, x):
@@ -108,14 +114,14 @@ class VggModel(nn.Module):
         # TODO: Implement the forward pass computations                                 #
         #################################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-        
-
+        out = self.features(x)
+        out = out.view(-1, 512)
+        out = self.classifier(out)
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         return out
 
 # Initialize the model for this run
-model= VggModel(num_classes, fine_tune, pretrained)
+model = VggModel(num_classes, fine_tune, pretrained)
 
 if (pretrained==False):
     model.apply(weights_init)
@@ -131,8 +137,9 @@ print("Params to learn:")
 if fine_tune:
     params_to_update = []
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-    
-    
+    for param in model.parameters():
+      param.requires_grad == True
+    params_to_update += list(model.parameters())
     
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 else:
@@ -153,7 +160,7 @@ lr = learning_rate
 total_step = len(train_loader)
 loss_train = []
 loss_val = []
-best_accuracy = None
+best_accuracy = 0
 accuracy_val = []
 best_model = type(model)(num_classes, fine_tune, pretrained) # get a new instance
 for epoch in range(num_epochs):
@@ -219,7 +226,9 @@ for epoch in range(num_epochs):
         #################################################################################
 
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
+        if accuracy > best_accuracy:
+          best_model.load_state_dict(model.state_dict())
+          best_accuracy=accuracy
 
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
@@ -231,15 +240,17 @@ for epoch in range(num_epochs):
 model.eval()
 
 
-plt.figure(2)
-plt.plot(loss_train, 'r', label='Train loss')
-plt.plot(loss_val, 'g', label='Val loss')
-plt.legend()
-plt.show()
+fig, ax = plt.subplots(1,2, figsize=(20,8))
+ax[0].plot(loss_train, 'r', label='Train loss')
+ax[0].plot(loss_val, 'g', label='Val loss')
+ax[0].grid(color='gray', linestyle='dashed')
+ax[0].legend()
+#plt.show()
 
-plt.figure(3)
-plt.plot(accuracy_val, 'r', label='Val accuracy')
-plt.legend()
+#plt.figure(3)
+ax[1].plot(accuracy_val, 'r', label='Val accuracy')
+ax[1].grid(color='gray', linestyle='dashed')
+ax[1].legend()
 plt.show()
 
 
@@ -250,7 +261,7 @@ plt.show()
 #################################################################################
 # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-
+model.load_state_dict(best_model.state_dict())
 
 # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -274,6 +285,4 @@ with torch.no_grad():
 
 
 # Save the model checkpoint
-#torch.save(model.state_dict(), 'model.ckpt')
-
-
+torch.save(model.state_dict(), 'model.ckpt')
